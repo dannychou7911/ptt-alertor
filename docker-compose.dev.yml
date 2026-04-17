@@ -1,0 +1,51 @@
+version: "3.8"
+
+# 本地開發專用的依賴服務（不包含 ptt-alertor 本身）
+# 啟動方式： docker compose -f docker-compose.dev.yml up -d
+# 停止方式： docker compose -f docker-compose.dev.yml down
+# 清除資料： docker compose -f docker-compose.dev.yml down -v
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: ptt-alertor-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  dynamodb:
+    # AWS 官方提供的 DynamoDB Local，完全本地、無需 AWS 帳號
+    image: amazon/dynamodb-local:latest
+    container_name: ptt-alertor-dynamodb
+    ports:
+      - "8000:8000"
+    command: >
+      -jar DynamoDBLocal.jar
+      -sharedDb
+      -dbPath /data
+    volumes:
+      - dynamodb-data:/data
+    working_dir: /home/dynamodblocal
+    restart: unless-stopped
+
+  dynamodb-admin:
+    # 選用：DynamoDB 的 Web GUI（像 phpMyAdmin 之於 MySQL）
+    # 打開 http://localhost:8001 就能看到 table 跟資料
+    image: aaronshaf/dynamodb-admin:latest
+    container_name: ptt-alertor-dynamodb-admin
+    ports:
+      - "8001:8001"
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb:8000
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: local
+    depends_on:
+      - dynamodb
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  dynamodb-data:

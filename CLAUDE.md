@@ -94,6 +94,8 @@ AWS（DynamoDB 用）：
 
 ## 相關文件與資源
 
+- `LOCAL_SETUP.md`：本地開發環境啟動指南（Docker Compose + 環境變數）
+- `docker-compose.dev.yml` + `.env.example`：一鍵啟動 Redis／DynamoDB Local／GUI 的本地開發依賴
 - `REQUEST_FLOW.md`：多個重要場景（看板查詢、背景推播、LINE Bot 新增訂閱）的 Mermaid 流程圖
 - `public/`：靜態 Web UI（`index`、`line`、`messenger`、`telegram`、`docs` 等 HTML）——`main.go` 中設為 `NotFound` handler 的預設 file server
 - `ecs-deploy`：shell 腳本，用於 AWS ECS 服務部署；`.github/workflows/main.yml` 的 deploy job 會呼叫它
